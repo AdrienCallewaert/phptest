@@ -13,47 +13,50 @@
 
 
 <body>
-        <h1>weatherapp, Bases de données MySQL</h1>
-        <h2>Entrez les données demandées :</h2>
+    <h1>weatherapp, Bases de données MySQL</h1>
+    <h2>Entrez les données :</h2>
+        <form action="index.php" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                <label>Ville</label>
+                        <p><input type="text" name="ville"></p>
+                <label>Haut</label>
+                        <p><input type="text" name="haut"></p>
+                <label>Bas</label>
+                        <p><input type="text" name="bas"></p>
 
-        </tbody>    
-        </table><br>
-
-        <form action="index.php" method="post">
-            <label for="ville">ville: <input type="text" name="ville" id="ville"></label><br><br>
-            <label for="haut">haut: <input type="text" name="haut" id="haut"></label><br><br>
-            <label for="bas">bas: <input type="text" name="bas" id="bas"></label><br><br>
-            <input type="submit" name="submit" value="submit">
+                <p><input type="submit" name="insert" value="Insérer"></p>
         </form>
 
-
         <?php
-            $servername = 'mysql:host=localhost;dbname=weatherapp;charset=utf8';
-            $username = 'root';
-            $password = '';
 
 
+        $servername = 'mysql:host=localhost;dbname=weatherapp;charset=utf8';
+        $username = 'root';
+        $password = '';
 
-            //On essaie de se connecter
-            try{
-                $conn = new PDO($servername, $username, $password);
-                //On définit le mode d'erreur de PDO sur Exception
-                echo 'Connexion réussie';
-            }
-            
-            catch(Exception $error)
-            {
-                // En cas d'erreur, on affiche un message et on arrête tout
-                die('Erreur : '.$error->getMessage());
-                echo "Erreur : " . $e->getMessage();
-            }
-
+        if(isset($_POST['insert'])){
+        try {
+        // se connecter à mysql
+        $pdo = new PDO("$servername","$username","$password");
+        } catch (PDOException $exc) {
+            echo $exc->getMessage();
+            exit();
+        }
+        // récupérer les valeurs 
+        $ville = $_POST['ville'];
+        $haut = $_POST['haut'];
+        $bas = $_POST['bas'];
+        // Requête mysql pour insérer des données
+        $sql = "INSERT INTO `météo`(`ville`, `haut`, `bas`) VALUES (:ville,:haut,:bas)";
+        $res = $pdo->prepare($sql);
+        $exec = $res->execute(array(":ville"=>$ville,":haut"=>$haut,":bas"=>$bas));
+        // vérifier si la requête d'insertion a réussi
+        if($exec){
+            echo 'Données insérées';
+        }else{
+            echo "Échec de l'opération d'insertion";
+        }
+        }
         ?>
 
-
-
-
-
 </body>
-</html
-
+</html>
