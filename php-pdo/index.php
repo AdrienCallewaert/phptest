@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -28,7 +29,7 @@
 
         <?php
 
-
+        // pour la MJ du tableau >>>>> début
         $servername = 'mysql:host=localhost;dbname=weatherapp;charset=utf8';
         $username = 'root';
         $password = '';
@@ -45,18 +46,65 @@
         $ville = $_POST['ville'];
         $haut = $_POST['haut'];
         $bas = $_POST['bas'];
+
         // Requête mysql pour insérer des données
         $sql = "INSERT INTO `météo`(`ville`, `haut`, `bas`) VALUES (:ville,:haut,:bas)";
         $res = $pdo->prepare($sql);
         $exec = $res->execute(array(":ville"=>$ville,":haut"=>$haut,":bas"=>$bas));
+
         // vérifier si la requête d'insertion a réussi
         if($exec){
             echo 'Données insérées';
         }else{
             echo "Échec de l'opération d'insertion";
         }
+
         }
+        // pour la MJ du tableau >>>>> fin
+
+
+
+        // pour afficher la tableau >>>>> début
+        $dsn = $servername; 
+        // récupérer tous les utilisateurs
+        $sql = "SELECT * FROM météo";
+         
+        try{
+         $pdo = new PDO("$servername","$username","$password");
+         $stmt = $pdo->query($sql);
+         
+         if($stmt === false){
+          die("Erreur");
+         }
+         
+        }catch (PDOException $e){
+          echo $e->getMessage();
+        }
+
+       // pour afficher la tableau >>>>> fin
+
+
+
         ?>
 
+        <table>
+        <thead>
+            <tr>
+            <th>ville</th>
+            <th>haut</th>
+            <th>bas</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php while($row = $stmt->fetch(PDO::FETCH_ASSOC)) : ?>
+            <tr>
+            <td><?php echo htmlspecialchars($row['ville']); ?></td>
+            <td><?php echo htmlspecialchars($row['haut']); ?></td>
+            <td><?php echo htmlspecialchars($row['bas']); ?></td>
+            
+            </tr>
+            <?php endwhile; ?>
+        </tbody>
+        </table>
 </body>
 </html>
